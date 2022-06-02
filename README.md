@@ -4,3 +4,8 @@ automatization of burdensome tasks, such as updating article listings on a blog,
 An example blog can be found in the `examples/blog` directory. To see the HTML generated from
 the example sources, use `durak examples/blog examples/blog_output` and open
 `examples/blog_output/index.html` in a web browser.
+
+# Installation
+```
+python3 -m pip install durak
+```
