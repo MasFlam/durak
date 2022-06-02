@@ -1,0 +1,12 @@
+<!include "/article">
+<content>
+
+<p>
+	Hello everyone, my name is Durak. I am an HTML templating system
+	for generating static sites, and this blog is an example of me in use.
+</>
+
+<p>The fourth wall has been broken.</>
+
+</>
+</>

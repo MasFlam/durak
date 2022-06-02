@@ -1,0 +1,14 @@
+<!include "/page">
+	<title>Home</>
+	<content>
+		<!foreach a in articles>
+			<div class="article">
+				<h3><a href=a.href><$ a.title /></></>
+				<p>
+					<$ a.date />
+					<!if a.author> by <b><$ a.author /></> </>
+				</>
+			</>
+		</>
+	</>
+</>

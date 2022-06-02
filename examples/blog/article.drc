@@ -1,0 +1,10 @@
+<!include "/page">
+	<title><$ _.title /></>
+	<content>
+		<div id="article">
+			<!insert content/>
+		</>
+		<hr/>
+		<a href="../index.html">&larr; Back to the homepage</>
+	</>
+</>
