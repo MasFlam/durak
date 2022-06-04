@@ -19,7 +19,8 @@ my-website/
 There are two types of resources – site resources and component resources. Each `.dr` file is a
 site resource, and each `.drc` file is a component resource. Each site resource will correspond
 to exactly one HTML file in the output, meanwhile component resources do not make for output by
-themselves, but are used by other resources instead.
+themselves, but are used by other resources instead. Every resource has a name, which is just `/`
+followed by its path in the source directory without the `.dr` or `.drc` extension.
 
 ### Site Resources
 
@@ -159,8 +160,9 @@ Operators: (operator associativity and priority the same as in Python)
 - `+`, `-`, `*`, `/`, `and`, `or`, `==`, `!=`, `>=`, `<=` – binary operators working exactly like their Python equivalents.
 - `<<`, `>>` – also binary, work like Python `<` and `>` respectively
 - `not` – unary, works like Python's `not`
-- `.` – binary, works like Python's `.` if the left hand side (LHS) has the attribute, and like `[]`
+- `.` – binary, works like Python's `.` if the left hand side has the attribute, and like `[]`
   if it does not. Also, if the value of that is a function, it is called without arguments and the
-  value of that is taken
+  value of that is taken.
+
 There are integer literals, float literals and string literals. Currently no escaping or
 interpolation is supported for string literals and float literals can't use scientific notation.
