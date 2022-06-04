@@ -6,8 +6,8 @@ and can nest subdirectories however deep you want. Here is an example file layou
 
 ```
 my-website/
-    foo/
-	    bar.dr
+	foo/
+		bar.dr
 		bar.py
 		bar.json
 	baz/
@@ -155,7 +155,7 @@ generated and the `Durak` object which, among other things, contains a `dict` of
 
 ## The Expression Language
 Operators: (operator associativity and priority the same as in Python)
-– `(`, `)`
+- `(`, `)`
 - `+`, `-`, `*`, `/`, `and`, `or`, `==`, `!=`, `>=`, `<=` – binary operators working exactly like their Python equivalents.
 - `<<`, `>>` – also binary, work like Python `<` and `>` respectively
 - `not` – unary, works like Python's `not`
