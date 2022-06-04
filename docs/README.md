@@ -67,7 +67,9 @@ In general, elements directly correspond to HTML elements on the output. They ca
 the form of a closed tag, or an opening tag, body and closing tag. They look almost exactly the
 same as in HTML, but note that a closing tag is always `</>` (you don't repeat the element's name).
 An element can have attributes (that correspond 1:1 to HTML attributes), whose values are not just
-strings, but can be full expressions.
+strings, but can be full expressions. If an attribute that is not the last one in the tag has a
+value, it needs to be followed semicolon. Attributes don't have to have values. In fact, when an
+attribute's value is `None`, it appears in the output HTML as if it had no value.
 ```dr
 <!-- A closed tag: -->
 <hr/>
@@ -76,7 +78,7 @@ strings, but can be full expressions.
 <b>Hello</>
 
 <!-- With attributes: >
-<a id=("link-" + foo.id) href=foo.link>...</>
+<a download id=("link-" + foo.id); href=foo.link>...</>
 ```
 
 ### Injections
