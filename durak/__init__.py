@@ -413,7 +413,7 @@ class Durak:
 		# Process the resources
 		for res in self.resources.values():
 			# 1. Load and parse the resource file
-			fs = FileStream(os.path.join(self.source_dir, res.path()))
+			fs = FileStream(os.path.join(self.source_dir, res.path()), encoding='utf-8')
 			lexer = DurakLexer(fs)
 			cts = CommonTokenStream(lexer)
 			parser = DurakParser(cts)
@@ -623,7 +623,6 @@ class Durak:
 		for res in self.resources.values():
 			if res.is_component() or res.status == 'rendered':
 				continue
-			#rendered = durak_render(self.resources, res)
 			rendered = self._render_resource(res)
 			outpath = os.path.join(target_dir, res.path_output())
 			outpath_dirname = os.path.dirname(outpath)
