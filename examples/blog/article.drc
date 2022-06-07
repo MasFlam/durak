@@ -1,5 +1,5 @@
 <!include "/page">
-	<title><$ _.title /></>
+	<title><$ _title /></>
 	<content>
 		<div id="article">
 			<!insert content/>

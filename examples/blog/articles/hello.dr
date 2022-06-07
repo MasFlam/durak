@@ -1,3 +1,5 @@
+<!let _title=_.title; foo="barr">
+
 <!include "/article">
 <content>
 
@@ -6,7 +8,9 @@
 	for generating static sites, and this blog is an example of me in use.
 </>
 
-<p>The fourth wall has been broken.</>
+<p>The fourth wall has been broken. <$ foo.upper /></>
 
 </>
+</>
+
 </>

@@ -11,11 +11,11 @@ element
 	| TAG_OPEN TAG_NAME tag_attribute* (tag_attribute_last EXPR_TAG_END | TAG_END) entity* CLOSING_TAG
 ;
 
-tag_attribute: TAG_ATTRIBUTE_NAME (TAG_EQ expr_dot EXPR_COLON)?;
-tag_attribute_last: TAG_ATTRIBUTE_NAME TAG_EQ expr_dot;
+tag_attribute: TAG_ATTRIBUTE_NAME (TAG_EQ expr EXPR_COLON)?;
+tag_attribute_last: TAG_ATTRIBUTE_NAME TAG_EQ expr;
 
 
-directive: if_directive | foreach_directive | include_directive | insert_directive;
+directive: if_directive | foreach_directive | let_directive | include_directive | insert_directive;
 
 if_directive:
 	DIRECTIVE_OPEN DIRECTIVE_IF expr EXPR_TAG_END
@@ -31,6 +31,14 @@ foreach_directive:
 	DIRECTIVE_OPEN DIRECTIVE_FOREACH DIRECTIVE_FOREACH_IDENTIFIER DIRECTIVE_IN expr EXPR_TAG_END
 	main_body+=entity*
 	(DIRECTIVE_OPEN DIRECTIVE_ELSE DIRECTIVE_END else_body+=entity*)?
+	CLOSING_TAG
+;
+
+let_directive:
+	DIRECTIVE_OPEN DIRECTIVE_LET
+	(idents+=DIRECTIVE_IDENTIFIER DIRECTIVE_EQ vals+=expr EXPR_COLON)*
+	idents+=DIRECTIVE_IDENTIFIER DIRECTIVE_EQ vals+=expr EXPR_TAG_END
+	body+=entity*
 	CLOSING_TAG
 ;
 

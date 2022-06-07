@@ -4,9 +4,9 @@ from typing import Optional, Dict
 import os
 import json
 import importlib.util
-from .grammar import DurakParser
-from .grammar import DurakLexer
-from .grammar import DurakParserVisitor
+from .grammar.DurakParser import DurakParser
+from .grammar.DurakLexer import DurakLexer
+from .grammar.DurakParserVisitor import DurakParserVisitor
 from antlr4 import FileStream, CommonTokenStream
 
 class DurakExpr:
@@ -138,6 +138,11 @@ class ForeachDirective:
 	else_body: Optional[list]
 
 @dataclass
+class LetDirective:
+	data: dict
+	body: list
+
+@dataclass
 class IncludeDirective:
 	expr: DurakExpr
 	body: Optional[list]
@@ -260,8 +265,8 @@ class DurakVisitor(DurakParserVisitor):
 	
 	def visitTag_attribute(self, ctx):
 		name = ctx.TAG_ATTRIBUTE_NAME().getText()
-		if ctx.expr_dot():
-			value = self.visit(ctx.expr_dot())
+		if ctx.expr():
+			value = self.visit(ctx.expr())
 		else:
 			value = None
 		return TagAttribute(name=name, value=value)
@@ -304,6 +309,17 @@ class DurakVisitor(DurakParserVisitor):
 		else:
 			else_body = None
 		return ForeachDirective(varname=varname, through=through, body=body, else_body=else_body)
+	
+	def visitLet_directive(self, ctx):
+		data = dict()
+		for ident, val_expr in zip(ctx.idents, ctx.vals):
+			name = ident.text
+			val = self.visit(val_expr)
+			data[name] = val
+		body = []
+		for ent in ctx.body:
+			body.append(self.visit(ent))
+		return LetDirective(data, body)
 	
 	def visitInclude_directive(self, ctx):
 		expr = self.visit(ctx.expr())
@@ -412,6 +428,7 @@ class Durak:
 		
 		# Process the resources
 		for res in self.resources.values():
+			print("Processing resource " + res.name())
 			# 1. Load and parse the resource file
 			fs = FileStream(os.path.join(self.source_dir, res.path()), encoding='utf-8')
 			lexer = DurakLexer(fs)
@@ -474,6 +491,11 @@ class Durak:
 					for ent in x.else_body:
 						new_else_body.extend(visit(ent))
 				return [ForeachDirective(x.varname, x.through, new_body, new_else_body)]
+			elif isinstance(x, LetDirective):
+				new_body = []
+				for ent in x.body:
+					new_body.extend(visit(ent))
+				return [LetDirective(x.data, new_body)]
 			elif isinstance(x, IncludeDirective):
 				if x.body is None:
 					new_body = None
@@ -492,6 +514,7 @@ class Durak:
 		return out
 	
 	def _render_resource(self, res: Resource):
+		print(f'Rendering resource {res._name}')
 		res.status = 'rendering'
 		doc = res.doc()
 		
@@ -576,6 +599,15 @@ class Durak:
 					new_locals[varname] = elem
 					for ent in x.body:
 						out.extend(render(new_locals, ent))
+				return out
+			if isinstance(x, LetDirective):
+				new_locals = locals.copy()
+				for name, expr in x.data.items():
+					val = eval_expr(locals, expr)
+					new_locals[name] = val
+				out = []
+				for ent in x.body:
+					out.extend(render(new_locals, ent))
 				return out
 			if isinstance(x, IncludeDirective):
 				comp_resname = str(eval_expr(locals, x.expr))

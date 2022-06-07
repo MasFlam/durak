@@ -1,3 +1,5 @@
+<!let _title=_.title>
+
 <!include "/article">
 <content>
 
@@ -6,4 +8,6 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent luctus justo n
 </>
 
 </>
+</>
+
 </>

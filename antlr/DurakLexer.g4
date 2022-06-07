@@ -29,10 +29,13 @@ DIRECTIVE_ELIF: 'elif' -> pushMode(IN_EXPR);
 DIRECTIVE_ELSE: 'else';
 DIRECTIVE_FOREACH: 'foreach' -> pushMode(IN_DIRECTIVE_FOREACH_IDENTIFIER);
 DIRECTIVE_IN: 'in' -> pushMode(IN_EXPR);
+DIRECTIVE_LET: 'let';
+DIRECTIVE_EQ: '=' -> pushMode(IN_EXPR);
 DIRECTIVE_INCLUDE: 'include' -> pushMode(IN_EXPR);
 DIRECTIVE_INSERT: 'insert' -> pushMode(IN_DIRECTIVE_INSERT_IDENTIFIER);
 DIRECTIVE_END: '>' -> popMode;
 DIRECTIVE_CLOSE: '/>' -> popMode;
+DIRECTIVE_IDENTIFIER: [a-zA-Z_][a-zA-Z0-9_]*;
 DIRECTIVE_WS: [ \t\n\r] -> skip;
 
 mode IN_DIRECTIVE_FOREACH_IDENTIFIER;
