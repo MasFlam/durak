@@ -122,6 +122,14 @@ rendered instead of the main body when the given collection is empty (when `len(
 </>
 ```
 
+#### `let` Directives
+The `let` directive allows to declare variables available in its body.
+```dr
+<!let foo=2 * x; bar="baz" * 2>
+	<$ foo.upper == baz />
+</>
+```
+
 #### `include` Directives
 You can make use of component resources with the `include` directive. It can either be a closed tag
 or a tag with a body of elements whose contents are used to replace `insert` tags in the component.
