@@ -352,6 +352,12 @@ class DurakVisitor(DurakParserVisitor):
 			return self.visitChildren(ctx)
 		return ExprAnd(left=self.visit(ctx.left), right=self.visit(ctx.right))
 	
+	def visitExpr_not(self, ctx):
+		if ctx.EXPR_NOT():
+			return ExprNot(expr=self.visit(ctx.expr_comp()))
+		else:
+			return self.visitChildren(ctx)
+	
 	def visitExpr_comp(self, ctx):
 		if not ctx.left:
 			return self.visitChildren(ctx)
@@ -552,8 +558,10 @@ class Durak:
 					return res.meta()
 				elif ident in locals:
 					return locals[ident]
-				else:
+				elif ident in locals:
 					return res.model()[ident]
+				else:
+					return None
 			if isinstance(e, ExprLiteral): return e.value
 		
 		def render(locals: dict, x) -> list:
@@ -677,7 +685,7 @@ class ResourceContext:
 def main():
 	parser = argparse.ArgumentParser(prog="durak", description="HTML templating language and static site generator.")
 	
-	parser.add_argument("-v", "--version", action='version', version='Durak 0.1.0')
+	parser.add_argument("-v", "--version", action='version', version='Durak 0.1.2')
 	parser.add_argument("src_dir", help="path to source directory")
 	parser.add_argument("out_dir", help="path to output directory")
 	
