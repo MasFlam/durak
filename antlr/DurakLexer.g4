@@ -12,14 +12,14 @@ TEXT: ~[<]+;
 
 mode ON_TAG;
 
-TAG_NAME: [a-zA-Z0-9_-]+ -> popMode, pushMode(IN_TAG);
+TAG_NAME: [a-zA-Z0-9_:-]+ -> popMode, pushMode(IN_TAG);
 
 mode IN_TAG;
 
 TAG_END: '>' -> popMode;
 TAG_CLOSE: '/>' -> popMode;
 TAG_EQ: '=' -> pushMode(IN_EXPR);
-TAG_ATTRIBUTE_NAME: [a-zA-Z0-9_-]+;
+TAG_ATTRIBUTE_NAME: [a-zA-Z0-9_:-]+;
 TAG_WS: [ \t\n\r] -> skip;
 
 mode IN_DIRECTIVE;
