@@ -2,7 +2,7 @@
 
 ANTLR_JAR=antlr/antlr-4.10.1-complete.jar
 
-rm -r durak/grammar
+rm -rf durak/grammar
 
 cd antlr
 
