@@ -181,7 +181,8 @@ class HtmlText:
 		return self.text
 
 class Resource:
-	def __init__(self, is_component: bool, name: str, has_py: bool, has_meta: bool):
+	def __init__(self, durak, is_component: bool, name: str, has_py: bool, has_meta: bool):
+		self._durak = durak
 		self._is_component = is_component
 		self._name = name
 		self._has_py = has_py
@@ -190,6 +191,7 @@ class Resource:
 		self._meta = None
 		self._pymod = None
 		self._model = None
+		self.model_status = None
 		self.status = None if is_component else 'unrendered'
 	
 	def is_component(self) -> bool:
@@ -214,6 +216,10 @@ class Resource:
 		return self._pymod
 	
 	def model(self) -> dict:
+		if self.model_status == 'generating':
+			raise Exception(f'Circular dependency during model generation on resource {self._name}')
+		if self._model is None:
+			self._durak._gen_model(self)
 		return self._model
 	
 	def path(self) -> str:
@@ -414,6 +420,7 @@ class Durak:
 	
 	def __init__(self, source_dir: str):
 		self.source_dir = source_dir
+		self._wd = os.getcwd()
 		self.resources = dict()
 		
 		# Scan the source directory for resources
@@ -426,10 +433,10 @@ class Durak:
 					has_py = os.path.isfile(path.removesuffix(".dr") + ".py")
 					has_meta = os.path.isfile(path.removesuffix(".dr") + ".json")
 					name = resname + "/" + file.removesuffix(".dr")
-					self.resources[name] = Resource(False, name, has_py, has_meta)
+					self.resources[name] = Resource(self, False, name, has_py, has_meta)
 				elif file.endswith(".drc") and os.path.isfile(path):
 					name = resname + "/" + file.removesuffix(".drc")
-					self.resources[name] = Resource(True, name, False, False)
+					self.resources[name] = Resource(self, True, name, False, False)
 		process_dir(self.source_dir, "")
 		
 		# Process the resources
@@ -457,6 +464,24 @@ class Durak:
 				mod = importlib.util.module_from_spec(spec)
 				spec.loader.exec_module(mod)
 				res._pymod = mod
+		
+		# Generate models for resources
+		for res in self.resources.values():
+			self._gen_model(res)
+	
+	def _gen_model(self, res: Resource):
+		if res.model_status == 'generated':
+			return
+		res.model_status = 'generating'
+		if res.has_py():
+			ctx = ResourceContext(self, res)
+			cwd = os.getcwd()
+			os.chdir(os.path.join(self._wd, self.source_dir, os.path.dirname(res.path())))
+			res._model = res.pymod().generate_model(ctx)
+			os.chdir(cwd)
+		else:
+			res._model = dict()
+		res.model_status = 'generated'
 	
 	def _use_component(self, res: Resource, params: dict):
 		def visit(x):
@@ -641,15 +666,6 @@ class Durak:
 				return [HtmlText(text)]
 			if isinstance(x, str):
 				return [HtmlText(x)]
-		
-		if res.has_py():
-			ctx = ResourceContext(self, res)
-			cwd = os.getcwd()
-			os.chdir(os.path.join(self.source_dir, os.path.dirname(res.path())))
-			res._model = res.pymod().generate_model(ctx)
-			os.chdir(cwd)
-		else:
-			res._model = dict()
 		
 		rendered = []
 		for entity in doc.body:
