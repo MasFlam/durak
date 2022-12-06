@@ -261,12 +261,12 @@ class DurakVisitor(DurakParserVisitor):
 			attributes.append(self.visit(attr))
 		if ctx.tag_attribute_last():
 			attributes.append(self.visit(ctx.tag_attribute_last()))
-		if ctx.entity() is not None:
+		if ctx.TAG_CLOSE() or ctx.EXPR_TAG_CLOSE():
+			body = None
+		else:
 			body = []
 			for ent in ctx.entity():
 				body.append(self.visit(ent))
-		else:
-			body = None
 		return Element(name=name, attributes=attributes, body=body)
 	
 	def visitTag_attribute(self, ctx):
@@ -599,9 +599,12 @@ class Durak:
 					attr_name = attr.name
 					attr_value = str(eval_expr(locals, attr.value))
 					attributes.append(HtmlAttribute(attr_name, attr_value))
-				body = []
-				for y in x.body:
-					body.extend(render(locals, y))
+				if x.body is not None:
+					body = []
+					for y in x.body:
+						body.extend(render(locals, y))
+				else:
+					body = None
 				return [HtmlElement(name, attributes, body)]
 			if isinstance(x, IfDirective):
 				for cond_expr, cond_body in zip(x.conditions, x.bodies):
