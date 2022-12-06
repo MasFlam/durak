@@ -704,7 +704,7 @@ class ResourceContext:
 def main():
 	parser = argparse.ArgumentParser(prog="durak", description="HTML templating language and static site generator.")
 	
-	parser.add_argument("-v", "--version", action='version', version='Durak 0.1.3')
+	parser.add_argument("-v", "--version", action='version', version='Durak 0.1.4')
 	parser.add_argument("src_dir", help="path to source directory")
 	parser.add_argument("out_dir", help="path to output directory")
 	
